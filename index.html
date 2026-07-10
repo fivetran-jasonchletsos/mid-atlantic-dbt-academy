@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>dbt Academy — Mid-Atlantic SE Team</title>
+<meta name="description" content="A hands-on, session-by-session refresher on how the Mid-Atlantic SE team builds dbt layers, uses dbt Wizard, and ships ODI demos on Fivetran + dbt Cloud." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2262%22 width=%2222%22 height=%2222%22 rx=%224%22 fill=%22%23cd7f32%22/><rect x=%2239%22 y=%2240%22 width=%2222%22 height=%2244%22 rx=%224%22 fill=%22%23a8b0b8%22/><rect x=%2268%22 y=%2216%22 width=%2222%22 height=%2268%22 rx=%224%22 fill=%22%23f0b429%22/></svg>" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="bg-scene"></div>
+<div class="grid-overlay"></div>
+
+<nav class="nav">
+  <a class="nav-brand" href="#top">
+    <span class="node-mark" aria-hidden="true"><svg viewBox="0 0 100 100"><rect x="8" y="60" width="24" height="24" rx="4" fill="currentColor" opacity="0.5"/><rect x="38" y="38" width="24" height="46" rx="4" fill="currentColor" opacity="0.75"/><rect x="68" y="14" width="24" height="70" rx="4" fill="currentColor"/></svg></span>
+    dbt Academy
+  </a>
+  <div class="nav-links">
+    <a href="#roadmap">Roadmap</a>
+    <a href="#lessons">Sessions</a>
+    <a href="#bonus">Bonus</a>
+    <a href="#console">Wizard Console</a>
+    <a href="#cheatsheet">Cheat Sheet</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-eyebrow">Six one-hour sessions &middot; two bonus deep-dives &middot; Fivetran + dbt Cloud</div>
+  <h1>How we actually build the <em>dbt layer</em> in an ODI demo</h1>
+  <p class="sub">
+    This isn't a generic dbt refresher — it's how the Mid-Atlantic team builds the transform
+    layer of a real ODI demo: bronze/silver/gold on top of a live Fivetran sync, dbt Wizard for
+    AI-assisted model authoring, and the CI/CD pattern that keeps a demo running without a
+    warehouse connection at showtime. You already have Fivetran and dbt Cloud accounts — this
+    picks up where your original dbt training left off.
+  </p>
+  <div class="hero-ctas">
+    <a class="btn btn-primary" href="#lessons">Start Session 1</a>
+    <a class="btn btn-ghost" href="#console">Try the Wizard Console</a>
+  </div>
+</header>
+
+<section id="roadmap">
+  <div class="section-head reveal">
+    <div class="section-tag">The Path</div>
+    <h2 class="section-title">Six sessions, two deep-dives</h2>
+    <p class="section-desc">Each session builds on the last. The flagship build in Session 6 assumes everything before it.</p>
+  </div>
+  <div class="roadmap reveal">
+    <div class="road-step"><div class="num">01</div><div class="label">dbt Cloud Refresher</div></div>
+    <div class="road-step"><div class="num">02</div><div class="label">Bronze, Silver, Gold</div></div>
+    <div class="road-step"><div class="num">03</div><div class="label">Fivetran &rarr; dbt (MDLS)</div></div>
+    <div class="road-step"><div class="num">04</div><div class="label">dbt Wizard</div></div>
+    <div class="road-step"><div class="num">05</div><div class="label">CI/CD &amp; Demo Narrative</div></div>
+    <div class="road-step"><div class="num">06</div><div class="label">Build a Demo Slice</div></div>
+    <div class="road-step bonus"><div class="num">BONUS</div><div class="label">Content Rules</div></div>
+    <div class="road-step bonus"><div class="num">BONUS</div><div class="label">Live-Demo Troubleshooting</div></div>
+  </div>
+</section>
+
+<section id="lessons">
+  <div class="section-head reveal">
+    <div class="section-tag">The Sessions</div>
+    <h2 class="section-title">Click a session to open it</h2>
+    <p class="section-desc">Every session is a full hour: a goal, exact steps, real commands, a checkpoint, and what to do if it breaks.</p>
+  </div>
+
+  <!-- SESSION 1 -->
+  <article class="lesson reveal" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour">SESSION 1</span>
+        <span class="lesson-title">dbt Cloud Refresher: Environments, IDE, and Git</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Refresher</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>You've had basic dbt training before — this is a fast refresh on the specific dbt Cloud mechanics you'll lean on for demo-building: environments, the Cloud IDE, and Git-backed development, not a from-scratch tutorial.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li>Log into dbt Cloud and open your project's IDE. Confirm you can see the file tree: <code>models/</code>, <code>seeds/</code>, <code>macros/</code>, <code>tests/</code>, and <code>dbt_project.yml</code>.</li>
+          <li>Check your <strong>environments</strong>: a Development environment (your own IDE session, your own schema) and a Deployment environment (what a scheduled job runs against). Demos live and die by knowing which one you're looking at.</li>
+          <li>Create a new branch for today's work directly from the IDE before changing anything.</li>
+          <li>Run a build from the Cloud IDE command bar to confirm your connection is live:
+            <div class="term"><button class="copy-btn" data-copy>Copy</button>dbt build</div>
+          </li>
+          <li>Open <strong>docs</strong> (the little book icon) and click through the existing DAG for whatever demo project you have open — you'll be adding to a DAG just like this one in Session 6.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>can point to the difference between your Development and Deployment environment</span></label>
+          <label><input type="checkbox"><span>created a branch and ran <code>dbt build</code> successfully in the Cloud IDE</span></label>
+          <label><input type="checkbox"><span>opened the docs DAG for an existing project</span></label>
+        </div>
+      </div>
+      <div class="lesson-block">
+        <h4>If something breaks</h4>
+        <div class="troubleshoot"><code>dbt build</code> fails immediately with a connection error &rarr; your environment's warehouse credentials have likely expired or point at a destination you don't have access to; check the environment's connection settings before debugging the SQL.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SESSION 2 -->
+  <article class="lesson reveal" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour">SESSION 2</span>
+        <span class="lesson-title">How Our Demos Are Structured: Bronze, Silver, Gold</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Build</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>Learn the specific three-layer pattern our ODI demos use — this is the shape a prospect's engineer expects to see when you walk them through the DAG.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li><span class="layer-tag bronze">BRONZE</span> is sources only — no SQL models. Just a <code>sources.yml</code> declaring exactly what Fivetran landed, with tests on <code>_fivetran_synced</code> and <code>_fivetran_deleted</code>:
+            <div class="term"><button class="copy-btn" data-copy>Copy</button>version: 2
+sources:
+  - name: shopify
+    tables:
+      - name: orders
+        columns:
+          - name: _fivetran_synced
+            tests: [not_null]</div>
+          </li>
+          <li><span class="layer-tag silver">SILVER</span> is one view per bronze table, named <code>stg_[source]__[table].sql</code>, using a source-&gt;renamed CTE and filtering out soft-deleted rows:
+            <div class="term"><button class="copy-btn" data-copy>Copy</button>with source as (
+    select * from {{ source('shopify', 'orders') }}
+    where _fivetran_deleted = false
+),
+renamed as (
+    select
+        id as order_id,
+        customer_id,
+        created_at as ordered_at,
+        total_price
+    from source
+)
+select * from renamed</div>
+          </li>
+          <li><span class="layer-tag gold">GOLD</span> is dimensional: <code>dim_[entity].sql</code> and <code>fct_[event].sql</code>, materialized as Iceberg tables so they hold up under a live audience:
+            <div class="term"><button class="copy-btn" data-copy>Copy</button>{{ config(
+    materialized='table',
+    table_type='iceberg',
+    format='parquet',
+    partitioned_by=['order_date']
+) }}
+select ...
+from {{ ref('stg_shopify__orders') }}</div>
+          </li>
+          <li>Scaffold this in your own sandbox project: <code>models/{bronze,silver,gold}</code>, then <code>dbt build --select bronze silver gold</code>.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>can explain what belongs in bronze vs. silver vs. gold without looking it up</span></label>
+          <label><input type="checkbox"><span>wrote one staging model following the source-&gt;renamed pattern</span></label>
+          <label><input type="checkbox"><span>wrote one gold model with Iceberg table config, and it builds clean</span></label>
+        </div>
+      </div>
+      <div class="lesson-block">
+        <h4>If something breaks</h4>
+        <div class="troubleshoot">Not every demo repo uses Iceberg/Athena under the hood — some run on DuckDB against seed data standing in for the real source system. If <code>table_type='iceberg'</code> errors on your profile, you're likely on a DuckDB-backed demo; drop that config and materialize as a plain table instead.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SESSION 3 -->
+  <article class="lesson reveal" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour">SESSION 3</span>
+        <span class="lesson-title">Fivetran &rarr; dbt: the MDLS Destination</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Build</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>Understand exactly how a Fivetran sync becomes queryable bronze data dbt can build on — the piece prospects always ask about.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li>Fivetran's Managed Data Lake Service (MDLS) destination lands synced data straight into an S3 bucket + Glue Data Catalog, provisioned ahead of time (Terraform in our demo repos, or by hand for a quick sandbox).</li>
+          <li>In your own Fivetran account, connect a free/sandbox source connector to an MDLS destination and let a first sync complete.</li>
+          <li>In dbt Cloud, point your connection at that same Glue/Athena catalog, then write <code>sources.yml</code> to match exactly what landed — table names and column names must match the sync 1:1, since bronze does no renaming.</li>
+          <li>Run <code>dbt build --select silver gold</code> against it. If it fails on missing columns, your <code>sources.yml</code> is out of sync with what actually landed — check the connector's schema tab in Fivetran, not your memory of it.</li>
+          <li>Trigger a second Fivetran sync, then re-run the same build — this is what "live data" actually looks like in a demo: the pipeline re-runs, not just the dashboard refreshing.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>connected a real Fivetran connector to an MDLS (or equivalent) destination</span></label>
+          <label><input type="checkbox"><span><code>sources.yml</code> matches the actually-synced schema, not an assumption</span></label>
+          <label><input type="checkbox"><span>re-ran a sync and re-ran the dbt build against fresh data</span></label>
+        </div>
+      </div>
+      <div class="lesson-block">
+        <h4>If something breaks</h4>
+        <div class="troubleshoot">Bronze source test failures right after a sync &rarr; the sync likely hasn't finished. Always confirm sync status in Fivetran before kicking off a build — a build against a half-finished sync is a common live-demo failure.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SESSION 4 -->
+  <article class="lesson reveal" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour">SESSION 4</span>
+        <span class="lesson-title">dbt Wizard: AI-Assisted Model Building</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Build</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>This is the differentiator prospects haven't seen anywhere else: dbt Wizard turns a plain-English business question into a compiled, previewed model without you hand-writing SQL from scratch — and without touching the warehouse until you approve what it found.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li>Install and authenticate:
+            <div class="term"><button class="copy-btn" data-copy>Copy</button>curl -fsSL https://.../install-wizard.sh | sh
+gcloud auth application-default login</div>
+          </li>
+          <li>From inside any dbt project (this works against the same project your dbt Cloud IDE points at), start a session:
+            <div class="term"><button class="copy-btn" data-copy>Copy</button>dbt-wizard</div>
+          </li>
+          <li>Ask a real business question in plain English — not a SQL request. Try the exact one from the Protocol Console below: <em>"Why do some stores keep showing inventory variance on Item A?"</em></li>
+          <li>Watch the tool-call sequence: <code>search</code> finds candidate models, <code>describe</code> shows grain and columns, <code>lineage</code> shows what feeds it and what depends on it, <code>warehouse</code> samples real rows to confirm the hypothesis.</li>
+          <li>When it proposes a model, it runs <code>dbt_compile</code> first — a preview, not a materialization. Read the preview before approving anything.</li>
+          <li>Only after the preview looks right do you approve <code>dbt_run</code>, which materializes into your own dev schema — never straight into a shared or production schema.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>authenticated and ran a session against a real project</span></label>
+          <label><input type="checkbox"><span>asked a business question and let it run the full search &rarr; describe &rarr; lineage &rarr; compile sequence</span></label>
+          <label><input type="checkbox"><span>can explain why compile-then-approve matters live, in front of a prospect</span></label>
+        </div>
+      </div>
+      <div class="lesson-block">
+        <h4>If something breaks</h4>
+        <div class="troubleshoot">Auth errors on <code>dbt-wizard</code> startup &rarr; your <code>gcloud</code> application-default credentials have expired; re-run the login command. This is the single most common live-demo hiccup with the Wizard — check it before you're in front of anyone.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SESSION 5 -->
+  <article class="lesson reveal" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour">SESSION 5</span>
+        <span class="lesson-title">CI/CD and the Demo Narrative</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Build</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>Understand the two ways a demo actually gets delivered, and why the models you build always map to one customer's specific pain point rather than a generic dataset.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li><strong>Pattern A — live warehouse.</strong> A real Fivetran sync feeds a real Athena/Snowflake/etc. destination and dbt builds against it in the room. Higher wow-factor, but depends on a live connection working on the day.</li>
+          <li><strong>Pattern B — scheduled, self-contained.</strong> Some demos run entirely on dbt-core in GitHub Actions: a workflow on a cron plus manual dispatch runs <code>dbt deps / seed / run / test / docs generate</code> against seed data standing in for the real source system, exports the gold-layer marts to JSON, and commits the refreshed data straight back into the repo that serves the demo frontend. No cloud credentials needed at showtime — nothing to break in front of a prospect.</li>
+          <li>Know which pattern the demo you're presenting uses <em>before</em> you're in the room, and never mix them up mid-pitch.</li>
+          <li>Remember every demo is tailored: the models and story map to the specific systems a prospect currently uses and the specific pain point in their pipeline — never present a demo as generic, always frame it around what it replaces for that buyer.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>can explain the difference between a live-warehouse demo and a scheduled/self-contained one</span></label>
+          <label><input type="checkbox"><span>knows which pattern applies to a demo you've personally run or plan to run</span></label>
+        </div>
+      </div>
+      <div class="lesson-block">
+        <h4>If something breaks</h4>
+        <div class="troubleshoot">Live demo warehouse is unreachable minutes before a call &rarr; if a Pattern-B (self-contained) version of the same demo exists, switch to it rather than troubleshooting infrastructure live.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SESSION 6 -->
+  <article class="lesson reveal" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour">SESSION 6</span>
+        <span class="lesson-title">Flagship: Build a Demo Slice End-to-End</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Build</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>Put Sessions 1-5 together: take one new business question all the way from a live Fivetran sync to a gold-layer model, using dbt Wizard to author it.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li>Pick (or reuse) a sandbox Fivetran connector synced to an MDLS or equivalent destination, connected to a dbt Cloud project with <code>bronze/silver/gold</code> scaffolded per Session 2.</li>
+          <li>Confirm bronze <code>sources.yml</code> matches the live sync and silver staging models build clean.</li>
+          <li>Pick one net-new business question relevant to the fictional company in your sandbox (e.g. "which channel's conversion is slipping this month?" — the same question in the Wizard Console below).</li>
+          <li>Use dbt Wizard to search, describe, and trace lineage before writing anything, then let it compile a preview.</li>
+          <li>Review the preview like you would in front of a prospect: does the grain make sense, do the numbers look plausible, is anything exposed that shouldn't be (see Bonus 1 before you screen-share this).</li>
+          <li>Approve the materialization, then add it to your project's docs and commit it on a branch.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>full bronze &rarr; silver &rarr; gold chain builds clean against a live sync</span></label>
+          <label><input type="checkbox"><span>one net-new gold model was authored end-to-end through dbt Wizard</span></label>
+          <label><input type="checkbox"><span>could present this model's story to a prospect in under two minutes</span></label>
+        </div>
+      </div>
+      <div class="lesson-block">
+        <h4>If something breaks</h4>
+        <div class="troubleshoot">Model compiles but the numbers look wrong &rarr; go back to the <code>warehouse</code> sampling step before touching SQL by hand; most "wrong number" issues are a grain mismatch (e.g. joining at the wrong level) that a quick sample would have caught.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- BONUS 1 -->
+  <article class="lesson bonus reveal" id="bonus" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour bonus-tag">BONUS</span>
+        <span class="lesson-title">Content Rules: Getting a Demo Booth-Ready</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Deep dive</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>Learn the content rules that separate an internal sandbox from something you'd actually screen-share with a prospect or show on a booth screen.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li>Never expose real underlying table names in on-screen UI copy — use business-friendly labels in anything a prospect sees.</li>
+          <li>Use generic or fictional organization names in any demo data or seed set, chosen so they don't collide with a real company that might be in the room.</li>
+          <li>Every connector shown in a demo should carry a clear, per-connector deep link back into the actual Fivetran connector setup — so a technical prospect can click through and see the real configuration, not just a screenshot.</li>
+          <li>Before presenting, do one pass specifically looking for anything that looks like real customer data, a real internal table name, or an internal-only Slack/Jira reference leaking into a title or comment.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>reviewed your Session 6 model for exposed table names or real org names</span></label>
+          <label><input type="checkbox"><span>confirmed the connector in your demo has a working deep link</span></label>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- BONUS 2 -->
+  <article class="lesson bonus reveal" data-lesson>
+    <div class="lesson-head" data-toggle>
+      <div class="lesson-title-wrap">
+        <span class="lesson-hour bonus-tag">BONUS</span>
+        <span class="lesson-title">Troubleshooting a Live Demo</span>
+      </div>
+      <div class="lesson-title-wrap">
+        <span class="lesson-energy">Deep dive</span>
+        <span class="lesson-toggle">+</span>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-block">
+        <h4>Goal</h4>
+        <p>The five failures that actually happen mid-demo, and the fast fix for each — memorize this before a customer call, not during one.</p>
+      </div>
+      <div class="lesson-block">
+        <h4>Steps</h4>
+        <ol>
+          <li><strong>Build kicked off before the sync finished:</strong> bronze source tests fail. Check sync status in Fivetran first, always.</li>
+          <li><strong>Iceberg partition mismatch on a gold model:</strong> usually a changed <code>partitioned_by</code> column after data already existed under the old partitioning. Full-refresh that one model rather than debugging in place.</li>
+          <li><strong>Athena/Glue permission error mid-demo:</strong> almost always an IAM role edge case on a newly provisioned destination — have a known-good fallback project ready rather than debugging IAM live.</li>
+          <li><strong>dbt Wizard auth expired:</strong> re-run the <code>gcloud</code> login before you're on the call, not during it.</li>
+          <li><strong>Warehouse totally unreachable:</strong> switch to the Pattern-B (self-contained, pre-built) version of the same demo if one exists, rather than troubleshooting infrastructure in front of a prospect.</li>
+        </ol>
+      </div>
+      <div class="lesson-block">
+        <h4>Checkpoint</h4>
+        <div class="checkpoint">
+          <label><input type="checkbox"><span>know, for a demo you personally run, whether a Pattern-B fallback exists</span></label>
+          <label><input type="checkbox"><span>have a pre-call checklist covering sync status and dbt Wizard auth</span></label>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section id="console">
+  <div class="section-head reveal">
+    <div class="section-tag">Try It</div>
+    <h2 class="section-title">Wizard Console</h2>
+    <p class="section-desc">A scripted replay of a real dbt Wizard session — pick a business question and watch the search &rarr; describe &rarr; lineage &rarr; compile &rarr; run sequence play out.</p>
+  </div>
+  <div class="console-controls reveal" id="consoleChips"></div>
+  <div class="console-run reveal">
+    <button class="btn btn-primary" id="consoleRun">Run Wizard</button>
+  </div>
+  <div class="console-log reveal" id="consoleLog"></div>
+  <p class="console-caption reveal" id="consoleCaption"></p>
+</section>
+
+<section id="cheatsheet">
+  <div class="section-head reveal">
+    <div class="section-tag">Reference</div>
+    <h2 class="section-title">The Cheat Sheet</h2>
+    <p class="section-desc">Keep this open in a second tab during Sessions 1-6.</p>
+  </div>
+  <div class="cheat-grid reveal">
+    <div class="cheat-card">
+      <h4>Layer naming</h4>
+      <table>
+        <tr><td class="mono">bronze</td><td>sources.yml only, no models</td></tr>
+        <tr><td class="mono">silver</td><td>stg_[source]__[table].sql, views</td></tr>
+        <tr><td class="mono">gold</td><td>dim_/fct_/mart_*.sql, Iceberg tables</td></tr>
+      </table>
+    </div>
+    <div class="cheat-card">
+      <h4>dbt build commands</h4>
+      <div class="term">dbt deps</div>
+      <div class="term">dbt build --select bronze silver gold</div>
+      <div class="term">dbt build --select silver gold</div>
+    </div>
+    <div class="cheat-card">
+      <h4>dbt Wizard tools</h4>
+      <table>
+        <tr><td class="mono">search</td><td>find candidate models for a question</td></tr>
+        <tr><td class="mono">describe</td><td>grain, columns, row counts</td></tr>
+        <tr><td class="mono">lineage</td><td>upstream/downstream dependencies</td></tr>
+        <tr><td class="mono">warehouse</td><td>sample real rows</td></tr>
+        <tr><td class="mono">dbt_compile</td><td>preview only, no materialization</td></tr>
+        <tr><td class="mono">dbt_run</td><td>materialize, only after approval</td></tr>
+      </table>
+    </div>
+    <div class="cheat-card">
+      <h4>dbt Wizard setup</h4>
+      <div class="term">curl -fsSL .../install-wizard.sh | sh</div>
+      <div class="term">gcloud auth application-default login</div>
+      <div class="term">dbt-wizard</div>
+    </div>
+    <div class="cheat-card">
+      <h4>Fivetran &rarr; dbt data flow</h4>
+      <p>Fivetran sync &rarr; MDLS destination (S3 + Glue) &rarr; bronze <code>sources.yml</code> &rarr; silver staging views &rarr; gold Iceberg tables.</p>
+    </div>
+    <div class="cheat-card">
+      <h4>Two demo delivery patterns</h4>
+      <p><strong>Live:</strong> real sync + real warehouse, built in the room.</p>
+      <p><strong>Self-contained:</strong> dbt-core in CI on a schedule, marts exported to JSON, zero cloud credentials at showtime.</p>
+    </div>
+    <div class="cheat-card">
+      <h4>"Sync finished but build still fails"</h4>
+      <p>Double-check <code>sources.yml</code> table/column names against the connector's actual schema tab in Fivetran — bronze does no renaming, so any drift fails immediately.</p>
+    </div>
+    <div class="cheat-card">
+      <h4>"Wizard won't authenticate"</h4>
+      <p>Re-run <code>gcloud auth application-default login</code>. This is the most common pre-demo hiccup — check it before you're on the call.</p>
+    </div>
+    <div class="cheat-card">
+      <h4>Before you screen-share</h4>
+      <p>No real table names in UI copy, generic org names only, and every connector needs a working deep link back into its real Fivetran setup.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>dbt Academy &middot; Mid-Atlantic SE Team &middot; source on <a href="https://github.com/fivetran-jasonchletsos/mid-atlantic-dbt-academy" target="_blank" rel="noopener">GitHub</a></p>
+  <p>Built with Claude Code, for a team that already knows dbt basics and needs the demo-specific playbook.</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
