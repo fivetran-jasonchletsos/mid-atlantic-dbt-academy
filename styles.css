@@ -281,7 +281,7 @@ section { padding: 7vh 6vw; max-width: 1140px; margin: 0 auto; }
   transition: max-height 0.3s ease;
   padding: 0 22px;
 }
-.lesson.open .lesson-body { padding: 0 22px 24px; }
+.lesson.open .lesson-body { max-height: 3000px; padding: 0 22px 24px; }
 
 .lesson-block { margin-bottom: 18px; }
 .lesson-block h4 {
