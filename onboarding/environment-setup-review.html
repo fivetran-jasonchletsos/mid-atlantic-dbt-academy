@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Environment Setup Review</title>
+<style>
+*{box-sizing:border-box}
+body{font-family: Georgia, 'Times New Roman', serif; color:#111; margin:0; font-size:11pt; line-height:1.45}
+h1{font-size:21pt; margin:0 0 2pt; letter-spacing:-.01em}
+.kicker{font-family:'Courier New',monospace; font-size:9pt; letter-spacing:.12em; text-transform:uppercase; color:#444; margin-bottom:6pt}
+.meta{font-family:'Courier New',monospace; font-size:9.5pt; color:#444; margin-bottom:16pt; border-bottom:1.5pt solid #111; padding-bottom:9pt}
+.meta b{color:#000}
+h2{font-size:13pt; margin:16pt 0 6pt; border-bottom:0.75pt solid #999; padding-bottom:3pt}
+h2 .part{font-family:'Courier New',monospace; font-size:9pt; letter-spacing:.08em; color:#444; margin-right:6pt}
+p{margin:4pt 0}
+.step{display:flex; gap:8pt; margin:7pt 0; break-inside:avoid}
+.box{flex:0 0 auto; width:11pt; height:11pt; border:1.25pt solid #111; margin-top:2pt}
+.step-body{flex:1}
+.step-title{font-weight:bold}
+.step-title .num{font-family:'Courier New',monospace; font-size:9pt; color:#444; margin-right:4pt}
+.how{margin:2pt 0 0; color:#222}
+.pass{margin:2pt 0 0; font-size:10pt}
+.pass b{font-family:'Courier New',monospace; font-size:8.5pt; letter-spacing:.08em; text-transform:uppercase}
+.fail{margin:2pt 0 0; font-size:10pt; color:#333}
+.fail b{font-family:'Courier New',monospace; font-size:8.5pt; letter-spacing:.08em; text-transform:uppercase; color:#000}
+code, .cmd{font-family:'Courier New',monospace; font-size:9.5pt; background:#f2f2f2; padding:0 3pt}
+.cmd-block{font-family:'Courier New',monospace; font-size:9.5pt; background:#f5f5f5; border:0.75pt solid #ccc; padding:5pt 8pt; margin:3pt 0}
+.note{border:1pt dashed #666; padding:7pt 11pt; margin:10pt 0; background:#fafafa; break-inside:avoid}
+.note .lbl{font-family:'Courier New',monospace; font-size:8.5pt; letter-spacing:.1em; text-transform:uppercase; font-weight:bold; margin-bottom:3pt}
+.signoff{border:1.25pt solid #111; padding:9pt 12pt; margin-top:14pt; break-inside:avoid}
+.signoff .row{display:flex; gap:20pt; margin-top:10pt}
+.signoff .line{flex:1; border-bottom:0.75pt solid #111; padding-top:14pt; font-family:'Courier New',monospace; font-size:8.5pt; color:#444}
+</style>
+</head>
+<body>
+
+<div class="kicker">Fivetran + dbt Labs &middot; Mid-Atlantic SE Team &middot; dbt Academy</div>
+<h1>Environment Setup Review</h1>
+<div class="meta"><b>Reviewer:</b> Jason Chletsos &nbsp;&middot;&nbsp; <b>New SE:</b> Anthony Bianay &nbsp;&middot;&nbsp; Work through every step in order, on Anthony's machine, with Anthony driving. Check the box only when the pass condition is met.</div>
+
+<h2><span class="part">PART A</span>Accounts and access</h2>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">1.</span>Fivetran login works</div>
+  <p class="how">Anthony logs into Fivetran (not you, not a shared screen) and lands on a dashboard he can read.</p>
+  <p class="pass"><b>Pass:</b> he can see the connector list and open a connector's detail page.</p>
+  <p class="fail"><b>If it fails:</b> resolve account/SSO access before anything else &mdash; nothing below works without it.</p>
+</div></div>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">2.</span>dbt Cloud login and IDE access</div>
+  <p class="how">He logs into dbt Cloud, opens the sandbox project, and launches the Cloud IDE.</p>
+  <p class="pass"><b>Pass:</b> the file tree shows <code>models/</code>, <code>seeds/</code>, <code>macros/</code>, <code>tests/</code>, and <code>dbt_project.yml</code>.</p>
+  <p class="fail"><b>If it fails:</b> he may have a dbt Cloud seat but no access to this project &mdash; fix project permissions, not the IDE.</p>
+</div></div>
+
+<h2><span class="part">PART B</span>Fivetran side: connector and first sync</h2>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">3.</span>Sandbox connector exists and points at an MDLS destination</div>
+  <p class="how">Open his connector. Confirm it targets the Managed Data Lake Service destination (S3 + Glue), or the equivalent sandbox destination, and that the destination schema is clearly prefixed with his own name so his sandbox syncs are identifiable in a shared workspace.</p>
+  <p class="pass"><b>Pass:</b> connector card shows the MDLS (or equivalent) destination and a sensible schema name.</p>
+</div></div>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">4.</span>First sync has completed &mdash; and he knows where to verify it</div>
+  <p class="how">Check sync status in the Fivetran UI together, then open the connector's <b>schema tab</b>. Tell him explicitly: this tab is the ground truth his bronze <code>sources.yml</code> must match 1:1, because bronze does no renaming.</p>
+  <p class="pass"><b>Pass:</b> sync shows complete; he can name the tables that landed.</p>
+  <p class="fail"><b>If it fails:</b> a build against a half-finished sync is the most common live-demo failure &mdash; wait for the sync, do not proceed on a partial one.</p>
+</div></div>
+
+<h2><span class="part">PART C</span>dbt Cloud side: environments, Git, and a clean build</h2>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">5.</span>Development and Deployment environments both exist</div>
+  <p class="how">Open the project's environment settings. Confirm a Development environment (his IDE session, his own dev schema) and a Deployment environment (what scheduled jobs run against), and that he can say which is which. Demos live and die by knowing which one you're looking at.</p>
+  <p class="pass"><b>Pass:</b> both environments exist and Development targets his own schema, not a shared one.</p>
+</div></div>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">6.</span>Git works from the IDE</div>
+  <p class="how">Have him create a scratch branch directly from the Cloud IDE before touching anything. This proves repo write access, not just read.</p>
+  <p class="pass"><b>Pass:</b> branch created and shown as active in the IDE.</p>
+</div></div>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">7.</span>Bronze / silver / gold scaffold is in place</div>
+  <p class="how">Check the file tree for <code>models/bronze</code>, <code>models/silver</code>, <code>models/gold</code>. Bronze should contain only <code>sources.yml</code> (no SQL models); silver holds <code>stg_[source]__[table].sql</code> views; gold holds <code>dim_</code>/<code>fct_</code> models with Iceberg config.</p>
+  <p class="pass"><b>Pass:</b> all three folders exist and follow the naming pattern.</p>
+</div></div>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">8.</span>A full build runs clean from the IDE</div>
+  <p class="how">From the Cloud IDE command bar, on his scratch branch:</p>
+  <div class="cmd-block">dbt build --select bronze silver gold</div>
+  <p class="pass"><b>Pass:</b> build completes with 0 errors, into his dev schema.</p>
+  <p class="fail"><b>If it fails:</b> an immediate connection error means the environment's warehouse credentials are expired or point at a destination he can't reach &mdash; fix the environment's connection settings before debugging any SQL. Missing-column errors mean <code>sources.yml</code> drifted from what actually synced &mdash; recheck against the schema tab from step 4, not memory. If <code>table_type='iceberg'</code> errors, the sandbox may be DuckDB-backed &mdash; drop that config and materialize a plain table.</p>
+</div></div>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">9.</span>Docs DAG opens</div>
+  <p class="how">Open docs (the book icon) and have him click through the existing DAG &mdash; he'll be adding to one just like it in Session 6.</p>
+  <p class="pass"><b>Pass:</b> DAG renders and he can trace one model from bronze source to gold.</p>
+</div></div>
+
+<h2><span class="part">PART D</span>dbt Wizard</h2>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">10.</span>Wizard installed and authenticated</div>
+  <p class="how">On his machine:</p>
+  <div class="cmd-block">gcloud auth application-default login<br>dbt-wizard</div>
+  <p class="pass"><b>Pass:</b> a session starts inside the sandbox dbt project with no auth error.</p>
+  <p class="fail"><b>If it fails:</b> expired <code>gcloud</code> application-default credentials are the single most common pre-demo hiccup &mdash; re-run the login. If <code>dbt-wizard</code> isn't found, run the install script from the course cheat sheet first.</p>
+</div></div>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">11.</span>One real Wizard question, end to end</div>
+  <p class="how">Have him ask a plain-English business question (the course's own: <i>"Why do some stores keep showing inventory variance on Item A?"</i>) and watch the sequence run: search, describe, lineage, warehouse, then <code>dbt_compile</code>.</p>
+  <p class="pass"><b>Pass:</b> he can state the safety rule in his own words &mdash; nothing touches the warehouse until he approves the compiled preview, and approved runs land only in his own dev schema, never a shared or production one.</p>
+</div></div>
+
+<h2><span class="part">PART E</span>Course readiness</h2>
+
+<div class="step"><div class="box"></div><div class="step-body">
+  <div class="step-title"><span class="num">12.</span>Course site and cheat sheet</div>
+  <p class="how">He opens the dbt Academy site, Session 1, with the cheat sheet in a second tab. Set the expectation: Sessions 1&ndash;6 in order, at his own pace, actually completing each checkpoint &mdash; plus the two bonus deep-dives before he presents to anyone.</p>
+  <p class="pass"><b>Pass:</b> site loads, he knows the working order, and he knows the "if something breaks" section exists in every session.</p>
+</div></div>
+
+<div class="note">
+  <div class="lbl">Fast reference &mdash; the four failures to check before any live run</div>
+  <p>1. Sync not finished &rarr; bronze source tests fail: always confirm sync status in Fivetran first. &nbsp;
+     2. <code>sources.yml</code> drift &rarr; missing-column build errors: recheck the connector's schema tab. &nbsp;
+     3. Wizard auth expired &rarr; re-run <code>gcloud auth application-default login</code> before the call. &nbsp;
+     4. Connection error on <code>dbt build</code> &rarr; environment credentials, not the SQL.</p>
+</div>
+
+<div class="signoff">
+  <div class="lbl" style="font-family:'Courier New',monospace; font-size:8.5pt; letter-spacing:.1em; text-transform:uppercase; font-weight:bold">Sign-off &mdash; all 12 steps passed</div>
+  <div class="row">
+    <div class="line">Anthony Bianay &middot; date</div>
+    <div class="line">Jason Chletsos &middot; date</div>
+  </div>
+</div>
+
+</body>
+</html>
